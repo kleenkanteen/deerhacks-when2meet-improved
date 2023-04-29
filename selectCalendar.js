@@ -1,3 +1,22 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.21.0/+esm';
+
+async function initSupabase() {
+  const SUPABASE_URL = 'https://whwkeouhmenvcbjwgbqq.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indod2tlb3VobWVudmNiandnYnFxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4Mjc3OTg5MywiZXhwIjoxOTk4MzU1ODkzfQ.kcp9RCb5ItbzXlfPPZq-ZyufQQJcgVnaLyIq8_vsSUA';
+
+  return createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+let supabaseClient = await initSupabase();
+
+// const { data, error } = await supabaseClient
+//     .from('Events')
+//     .insert([
+//       { Name: "battle"},
+//     ]);
+//   console.log(data, error);
+
+
 const columns = document.querySelectorAll(".day");
 let dayStates = Array(7).fill(false);
 
@@ -23,9 +42,9 @@ onmousedown = () => {
 
 
 
-const btn = document.getElementById("create-event-btn");
+const createEventbtn = document.getElementById("create-event-btn");
 
-btn.onclick = (e) => {
+createEventbtn.onclick = async (e) => {
     e.preventDefault();
 
 
@@ -34,8 +53,52 @@ btn.onclick = (e) => {
     const toTime = parseInt(document.getElementById("to").value);
     if(fromTime >= toTime) return;
 
+    // 11:00 -> 1100
+
+    // 1:30 -> 1330
+
+    // 2:30 -> 1430
+
     const eventName = document.getElementById("eventname").value;
     if(!eventName || !dayStates.some((el) => {return Boolean(el)})) return;
+
+
+    let { data, error } = await supabaseClient
+    .from('Events')
+    .insert([
+      { Name: eventName},
+    ]);
+    console.log(data, error);
+
+    let atHalfHour = fromTime.toString().charAt(fromTime.toString().length - 2) == "3";
+    let numRows;
+
+    if(atHalfHour) {
+        numRows = 1 + (toTime - fromTime + 70) / 50;
+    } else {
+        numRows = (toTime - fromTime + 30) / 30;
+    }
+
+
+
+    // const reqs = {
+    //     ID: "",
+    //     Time: "",
+    //     Day: "",
+    //     Event: "",
+    //     UserID: null
+    // }
+
+    // ({ data, error }) = ( await supabaseClient
+    // .from('Times')
+    // .insert([
+    //   reqs,
+    // ]));
+    // console.log(data, error);
+
+
+    
+
 
     document.getElementById("group-event").style.display = "flex";
 
@@ -73,10 +136,8 @@ nameBtn.onclick = (e) => {
     if(atHalfHour) {
         numRows = 1 + (toTime - fromTime + 70) / 50;
     } else {
-        numRows = (toTime - fromTime + 50) / 50;
+        numRows = (toTime - fromTime + 30) / 30;
     }
-
-    console.log(numRows);
 
     const dayEnum = ["S", "M", "Tu", "W", "Th", "F", "S"];
 
