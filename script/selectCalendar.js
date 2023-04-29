@@ -28,6 +28,8 @@ const btn = document.getElementById("create-event-btn");
 btn.onclick = (e) => {
     e.preventDefault();
 
+
+    // Sanitization of input
     const fromTime = parseInt(document.getElementById("from").value);
     const toTime = parseInt(document.getElementById("to").value);
     if(fromTime >= toTime) return;
@@ -35,40 +37,67 @@ btn.onclick = (e) => {
     const eventName = document.getElementById("eventname").value;
     if(!eventName || !dayStates.some((el) => {return Boolean(el)})) return;
 
-    document.querySelector("#group-event h3").innerText = eventName;
+    document.getElementById("group-event").style.display = "flex";
 
+    document.querySelector("#group-event h3").innerText = "Your schedule for " +  eventName;
+
+    document.getElementById("setup").style.display = "none";
+}
+
+
+const nameBtn = document.getElementById("auth-submit");
+
+nameBtn.onclick = (e) => {
+    e.preventDefault();
+
+    if(!document.getElementById("username").value) return;
+
+    document.getElementById("auth").style.display = "none";
+
+    // ------------------------------------
+    // GET HTTP STUFF HERE FROM DATABASE
+    // ------------------------------------
+
+
+    const fromTime = parseInt(document.getElementById("from").value);
+    const toTime = parseInt(document.getElementById("to").value);
+
+    const eventName = document.getElementById("eventname").value;
+
+    // Account for half hours being kinda weird
     const userCalendar = document.getElementById("user-calendar");
     let atHalfHour = fromTime.toString().charAt(fromTime.toString().length - 2) == "3";
     let numRows;
 
     if(atHalfHour) {
-        numRows = 1;
-        numRows += (toTime - fromTime + 70) / 50;
+        numRows = 1 + (toTime - fromTime + 70) / 50;
     } else {
-        numRows += (toTime - fromTime + 50) / 50;
+        numRows = (toTime - fromTime + 50) / 50;
     }
+
+    console.log(numRows);
 
     const dayEnum = ["S", "M", "Tu", "W", "Th", "F", "S"];
 
     let numCols = 0;
 
+    // CONSTRUCT THE CALENDAR based on number of rows, cols, times, etc.
     let out = `<div class='day-header'></div>`
-
     for(let i = 0; i < 7; i++) {
         if(!dayStates[i]) continue;
         
         out += `<div class="day-header">${dayEnum[i]}</div>`;
         numCols += 1;
-
     }
 
     let currTime = fromTime;
 
-    out += "<div class=''>";
+    // Times (left most column)
+    out += "<div>";
     for(let i = 0; i < numRows; i++) {
         s = currTime.toString().slice(0, -2) + ":" + currTime.toString().slice(-2);
 
-        out += `<div class='cell cell-time'>${s}</div>`;
+        out += `<div draggable="false" class='cell cell-time'>${s}</div>`;
         if(atHalfHour) {
             currTime += 70;
         } else {
@@ -79,11 +108,12 @@ btn.onclick = (e) => {
 
     out += "</div>";
 
+    // The actual days and selectable cells
     for(let i = 0; i < 8; i++) {
 
         if(!dayStates[i]) continue;
 
-        out += `<div class="">`;
+        out += `<div draggable="false" class='cell-col'>`;
 
         for(let j = 0; j < numRows; j++) {
             out += `<div class='cell'></div>`
@@ -92,9 +122,52 @@ btn.onclick = (e) => {
 
     }
 
+    // Update them
     userCalendar.style.gridTemplateColumns = `1fr repeat(${numCols}, 2fr)`;
     userCalendar.innerHTML = out;
 
+    // DRAGGING AND SELECTING TIMES
+    const cols = document.querySelectorAll("#user-calendar .cell-col");
+    let values = []; // This will store all the highlighted stuff
+    let isDragging = false;
 
+    cols.forEach((col) => {
+        values.push([Array(col.children.length).fill(false)]);
+    })
+
+    let tabs = [];
+
+    cols.forEach((col) => {
+        let toPush = [];
+
+        for(let i = 0; i < col.children.length; i++) {
+            toPush.push(col.children[i]);
+        }
+
+        tabs.push(toPush);
+
+    });
+
+    onmousedown = () => {
+        isDragging = true;
+    }
+
+    onmouseup = () => {
+        isDragging = false;
+    }
+
+    tabs.forEach((col) => {
+        col.forEach((tab) => {
+            tab.addEventListener("mouseenter", (event) => {
+                if(!isDragging) return;
+                tab.classList.toggle("selected")
+            })
+
+            tab.addEventListener("mousedown", (event) => {
+                tab.classList.toggle("selected")
+            })
+
+        })
+    })
 }
 

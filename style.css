@@ -55,11 +55,17 @@ input[type=text] {
     border-radius: 0 10px 10px 0;
     background: #fff;
     flex-basis: 100%;
+    outline: 2px solid #159b42;
 }
 
 select {
     margin-left: 10px;
     padding: 10px;
+    outline: 2px solid #159b42;
+    border-radius: 10px;
+    border: none;
+    background-color: #fff;
+
 }
 
 label {
@@ -69,10 +75,11 @@ label {
     color: white;
     min-width: 200px;
     text-align: center;
+    outline: 2px solid #159b42;
+
 }
 
-
-.event-settings form {
+form {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -152,12 +159,18 @@ input[type="submit"]:hover {
     text-align: center;
 }
 
+.cell.selected {
+    background-color: #159b42;
+}
+
 .cell-time {
     background-color: #0FA899;
     color: white;
 }
 
-
+#group-event {
+    display: none;
+}
 
 
 footer {
