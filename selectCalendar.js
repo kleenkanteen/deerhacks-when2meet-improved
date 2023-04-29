@@ -16,9 +16,13 @@ let supabaseClient = await initSupabase();
 //     ]);
 //   console.log(data, error);
 
+let outDays;
+
 
 const columns = document.querySelectorAll(".day");
 let dayStates = Array(7).fill(false);
+const dayEnum = ["S", "M", "Tu", "W", "Th", "F", "S"];
+
 
 
 columns.forEach((col, i) => {
@@ -38,6 +42,12 @@ onmousedown = () => {
         }
     })
 
+}
+
+async function formatTime(num) {
+    let hours = Math.floor(num / 100);
+    let minutes = num % 100;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 }
 
 
@@ -70,35 +80,39 @@ createEventbtn.onclick = async (e) => {
     ]);
     console.log(data, error);
 
-    let atHalfHour = fromTime.toString().charAt(fromTime.toString().length - 2) == "3";
-    let numRows;
+    const times = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'];
 
-    if(atHalfHour) {
-        numRows = 1 + (toTime - fromTime + 70) / 50;
-    } else {
-        numRows = (toTime - fromTime + 30) / 30;
-    }
+    let fromTimeFormatted = await formatTime(fromTime);
+    let toTimeFormatted = await formatTime(toTime);
 
+    let fromIdx = times.indexOf(fromTimeFormatted);
+    let toIdx = times.indexOf(toTimeFormatted);
 
+    let outTimes = times.slice(fromIdx, toIdx + 1);
+    outDays = [];
 
-    // const reqs = {
-    //     ID: "",
-    //     Time: "",
-    //     Day: "",
-    //     Event: "",
-    //     UserID: null
-    // }
+    dayStates.forEach((day, i) => {
+        if(day) {
+            outDays.push(dayEnum[i])
+        }
+    })
 
-    // ({ data, error }) = ( await supabaseClient
-    // .from('Times')
-    // .insert([
-    //   reqs,
-    // ]));
-    // console.log(data, error);
+    const reqs = [];
 
+    outDays.forEach((day) => {
+        outTimes.forEach((time) => {
+            reqs.push({Event: eventName, Day: day, Time: time, UserID: null})
+        })
+    });
 
-    
+    console.log(reqs);
 
+    const { data1, error1 } = ( await supabaseClient
+    .from('Times')
+    .insert(
+      reqs,
+    ));
+    console.log(data1, error1);
 
     document.getElementById("group-event").style.display = "flex";
 
@@ -111,17 +125,15 @@ createEventbtn.onclick = async (e) => {
 const nameBtn = document.getElementById("auth-submit");
 
 let values;
-nameBtn.onclick = (e) => {
+let username;
+nameBtn.onclick = async (e) => {
     e.preventDefault();
 
     if(!document.getElementById("username").value) return;
 
+    username = document.getElementById("username").value
+
     document.getElementById("auth").style.display = "none";
-
-    // ------------------------------------
-    // GET HTTP STUFF HERE FROM DATABASE
-    // ------------------------------------
-
 
     const fromTime = parseInt(document.getElementById("from").value);
     const toTime = parseInt(document.getElementById("to").value);
@@ -139,8 +151,6 @@ nameBtn.onclick = (e) => {
         numRows = (toTime - fromTime + 30) / 30;
     }
 
-    const dayEnum = ["S", "M", "Tu", "W", "Th", "F", "S"];
-
     let numCols = 0;
 
     // CONSTRUCT THE CALENDAR based on number of rows, cols, times, etc.
@@ -157,7 +167,7 @@ nameBtn.onclick = (e) => {
     // Times (left most column)
     out += "<div>";
     for(let i = 0; i < numRows; i++) {
-        s = currTime.toString().slice(0, -2) + ":" + currTime.toString().slice(-2);
+        let s = currTime.toString().slice(0, -2) + ":" + currTime.toString().slice(-2);
 
         out += `<div draggable="false" class='cell cell-time'>${s}</div>`;
         if(atHalfHour) {
@@ -187,6 +197,11 @@ nameBtn.onclick = (e) => {
     // Update them
     userCalendar.style.gridTemplateColumns = `1fr repeat(${numCols}, 2fr)`;
     userCalendar.innerHTML = out;
+
+
+    document.querySelector(".user-calendar-settings").style.display = "block";
+
+    // userCalendarSettings
 
     // DRAGGING AND SELECTING TIMES
     const cols = document.querySelectorAll("#user-calendar .cell-col");
