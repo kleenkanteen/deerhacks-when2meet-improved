@@ -10,7 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-    <script defer src="selectCalendar.js"></script>
+    <script defer src="script/selectCalendar.js"></script>
+    <script defer src="script/makeCalendar.js"></script>
 </head>
 <body>
     <header>
@@ -18,84 +19,128 @@
         <h3>Witty Subheader</h3>
     </header>
 
+        <main id="setup">
+            <div class="calendar-settings">
+                <h3>Select which Days of the Week work</h3>
+                <div class="calendar">
+                    <div class="day-header">S</div>
+                    <div class="day-header">M</div>
+                    <div class="day-header">Tu</div>
+                    <div class="day-header">W</div>
+                    <div class="day-header">Th</div>
+                    <div class="day-header">F</div>
+                    <div class="day-header">S</div>
     
-    <main>
-        <div class="calendar-settings">
-            <div class="calendar">
-                <div class="day-header">S</div>
-                <div class="day-header">M</div>
-                <div class="day-header">T</div>
-                <div class="day-header">W</div>
-                <div class="day-header">T</div>
-                <div class="day-header">F</div>
-                <div class="day-header">S</div>
+                    <div class="day"></div>
+                    <div class="day"></div>
+                    <div class="day"></div>
+                    <div class="day"></div>
+                    <div class="day"></div>
+                    <div class="day"></div>
+                    <div class="day"></div>
+    
+                </div>
+    
+            </div>
+    
+            <div class="event-settings">
+                <form action="">
+                    <div class="group">
+                        <label for="eventname">Event Name</label>
+                        <input type="text" id="eventname" name="eventname">
+                    </div>
+        
+                    <div class="group">
+                        <label for="eventname">Sometime After:</label>
+                        <select name="from" id="from">
+                            <option selected="selected" value="800">8:00 AM</option>
+                            <option value="830">8:30 AM</option>
+                            <option value="900">9:00 AM</option>
+                            <option value="930">9:30 AM</option>
+                            <option value="1000">10:00 AM</option>
+                            <option value="1030">10:30 AM</option>
+                            <option value="1100">11:00 AM</option>
+                            <option value="1130">11:30 AM</option>
+                            <option value="1200">12:00 PM</option>
+                            <option value="1230">12:30 PM</option>
+                            <option value="1300">1:00 PM</option>
+                            <option value="1330">1:30 PM</option>
+                            <option value="1400">2:00 PM</option>
+                            <option value="1430">2:30 PM</option>
+                            <option value="1500">3:00 PM</option>
+                            <option value="1530">3:30 PM</option>
+                            <option value="1600">4:00 PM</option>
+                            <option value="1630">4:30 PM</option>
+                            <option value="1700">5:00 PM</option>
+                            <option value="1730">5:30 PM</option>
+                            <option value="1800">6:00 PM</option>
+                            <option value="1830">6:30 PM</option>
+                            <option value="1900">7:00 PM</option>
+                            <option value="1930">7:30 PM</option>
+                            <option value="2000">8:00 PM</option>
+                            <option value="2030">8:30 PM</option>
+                            <option value="2100">9:00 PM</option>
+                        </select>
+                    </div>
+        
+                    <div class="group">
+                        <label for="eventname">...But Before:</label>
+                        <select name="to" id="to">
+                            <option value="800">8:00 AM</option>
+                            <option value="830">8:30 AM</option>
+                            <option value="900">9:00 AM</option>
+                            <option value="930">9:30 AM</option>
+                            <option value="1000">10:00 AM</option>
+                            <option value="1030">10:30 AM</option>
+                            <option value="1100">11:00 AM</option>
+                            <option value="1130">11:30 AM</option>
+                            <option selected="selected" value="1200">12:00 PM</option>
+                            <option value="1230">12:30 PM</option>
+                            <option value="1300">1:00 PM</option>
+                            <option value="1330">1:30 PM</option>
+                            <option value="1400">2:00 PM</option>
+                            <option value="1430">2:30 PM</option>
+                            <option value="1500">3:00 PM</option>
+                            <option value="1530">3:30 PM</option>
+                            <option value="1600">4:00 PM</option>
+                            <option value="1630">4:30 PM</option>
+                            <option value="1700">5:00 PM</option>
+                            <option value="1730">5:30 PM</option>
+                            <option value="1800">6:00 PM</option>
+                            <option value="1830">6:30 PM</option>
+                            <option value="1900">7:00 PM</option>
+                            <option value="1930">7:30 PM</option>
+                            <option value="2000">8:00 PM</option>
+                            <option value="2030">8:30 PM</option>
+                            <option value="2100">9:00 PM</option>
+                        </select>
+                    </div>
+    
+                    <input type="submit" id="create-event-btn" value="Create Event">
+                </form>
+                
+            </div>
+        </main>
+    
+        <main id="group-event">
 
-                <div class="day"></div>
-                <div class="day"></div>
-                <div class="day"></div>
-                <div class="day"></div>
-                <div class="day"></div>
-                <div class="day"></div>
-                <div class="day"></div>
-
+            <div class="calendar-settings">
+                <h3></h3>
+                <div id="user-calendar">
+    
+                </div>
+    
             </div>
 
-        </div>
 
-        <div class="event-settings">
-            <form action="POST">
-                <div class="group">
-                    <label for="eventname">Event Name</label>
-                    <input type="text" name="eventname">
-                </div>
-    
-                <div class="group">
-                    <label for="eventname">Sometime After:</label>
-                    <select name="from" id="from">
-                        <option value="800">8:00 AM</option>
-                        <option value="900">9:00 AM</option>
-                        <option value="1000">10:00 AM</option>
-                        <option value="1100">11:00 AM</option>
-                        <option value="1200">12:00 PM</option>
-                        <option value="100">1:00 PM</option>
-                        <option value="200">2:00 PM</option>
-                        <option value="300">3:00 PM</option>
-                        <option value="400">4:00 PM</option>
-                        <option value="500">5:00 PM</option>
-                        <option value="600">6:00 PM</option>
-                        <option value="700">7:00 PM</option>
-                        <option value="800">8:00 PM</option>
-                    </select>
-                </div>
-    
-                <div class="group">
-                    <label for="eventname">...But Before:</label>
-                    <select name="to" id="to">
-                        <option value="800">8:00 AM</option>
-                        <option value="900">9:00 AM</option>
-                        <option value="1000">10:00 AM</option>
-                        <option value="1100">11:00 AM</option>
-                        <option value="1200">12:00 PM</option>
-                        <option value="100">1:00 PM</option>
-                        <option value="200">2:00 PM</option>
-                        <option value="300">3:00 PM</option>
-                        <option value="400">4:00 PM</option>
-                        <option value="500">5:00 PM</option>
-                        <option value="600">6:00 PM</option>
-                        <option value="700">7:00 PM</option>
-                        <option value="800">8:00 PM</option>
-                    </select>
-                </div>
 
-                <input type="submit" value="Create Event">
-            </form>
-            
-        </div>
-    </main>
+
+
+        </main>
 
     <footer>
         <p>Made for DeerHacks 2023 hackathon</p>
-        <p>David Kochanski, [] []</p>
+        <p>David Kochanski, [], []</p>
     </footer>
 
 </body>

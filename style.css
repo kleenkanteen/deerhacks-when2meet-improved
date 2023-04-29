@@ -6,6 +6,7 @@
 
 body {
     font-family: 'Lato', sans-serif;
+    background-color: #e0ffea ;
 }
 
 header {
@@ -41,7 +42,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 50px;
 }
 
 main > * {
@@ -52,7 +53,7 @@ input[type=text] {
     all: unset;
     padding: 14px;
     border-radius: 0 10px 10px 0;
-    background: #eee;
+    background: #fff;
     flex-basis: 100%;
 }
 
@@ -103,13 +104,29 @@ input[type="submit"]:hover {
 
 
 
-.calendar {
+.calendar, #user-calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: 1fr 5fr;
     column-gap: 1px;
     overflow: hidden;
     border-radius: 10px;
+    max-width: 450px;
+    width: 100%;
+}
+
+#user-calendar {
+    max-width: 500px;
+}
+
+.calendar-settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-settings h3 {
+    margin-bottom: 10px;
 }
 
 
@@ -121,12 +138,24 @@ input[type="submit"]:hover {
 }
 
 .day {
-    background-color: #f08080;
-    height: 100%;
+    background-color: #fe6f6f;
+    height: 250px;
     width: 100%;
     min-width: 40px;
 }
 
+.cell {
+    background-color: #fe6f6f;
+    border-top: 2px solid #e0ffea ;
+    width: 100%;
+    height: 30px;
+    text-align: center;
+}
+
+.cell-time {
+    background-color: #0FA899;
+    color: white;
+}
 
 
 
@@ -141,14 +170,14 @@ footer {
     flex-direction: column;
     gap: 10px;
     font-size: 18px;
-    
+    color: white;
 }
+
 
 
 
 @media only screen and (max-width: 800px) {
     main {
         flex-direction: column;
-        gap: 100px;
     }
 }
