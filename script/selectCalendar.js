@@ -148,6 +148,18 @@ nameBtn.onclick = (e) => {
 
     });
 
+    // WIP RESET BUTTON
+    // document.getElementById("reset-calendar").onclick = (event) => {
+    //     event.preventDefault();
+    //     values = [];
+    
+    //     cols.forEach((col) => {
+    //         values.push([Array(col.children.length).fill(false)]);
+
+    //     })
+
+    // }
+
     onmousedown = () => {
         isDragging = true;
     }
