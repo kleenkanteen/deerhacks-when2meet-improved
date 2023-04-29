@@ -18,7 +18,60 @@
 
     
     <main>
-        <input type="text" placeholder="Event Name">
+        <div class="calendar">
+            insert calendar soon
+
+        </div>
+
+        <div class="event-settings">
+            <form action="POST">
+                <div class="group">
+                    <label for="eventname">Event Name</label>
+                    <input type="text" name="eventname">
+                </div>
+    
+                <div class="group">
+                    <label for="eventname">Sometime After:</label>
+                    <select name="from" id="from">
+                        <option value="800">8:00 AM</option>
+                        <option value="900">9:00 AM</option>
+                        <option value="1000">10:00 AM</option>
+                        <option value="1100">11:00 AM</option>
+                        <option value="1200">12:00 PM</option>
+                        <option value="100">1:00 PM</option>
+                        <option value="200">2:00 PM</option>
+                        <option value="300">3:00 PM</option>
+                        <option value="400">4:00 PM</option>
+                        <option value="500">5:00 PM</option>
+                        <option value="600">6:00 PM</option>
+                        <option value="700">7:00 PM</option>
+                        <option value="800">8:00 PM</option>
+                    </select>
+                </div>
+    
+                <div class="group">
+                    <label for="eventname">...But Before:</label>
+                    <select name="to" id="to">
+                        <option value="800">8:00 AM</option>
+                        <option value="900">9:00 AM</option>
+                        <option value="1000">10:00 AM</option>
+                        <option value="1100">11:00 AM</option>
+                        <option value="1200">12:00 PM</option>
+                        <option value="100">1:00 PM</option>
+                        <option value="200">2:00 PM</option>
+                        <option value="300">3:00 PM</option>
+                        <option value="400">4:00 PM</option>
+                        <option value="500">5:00 PM</option>
+                        <option value="600">6:00 PM</option>
+                        <option value="700">7:00 PM</option>
+                        <option value="800">8:00 PM</option>
+                    </select>
+                </div>
+
+                <input type="submit" value="Create Event">
+            </form>
+            
+        </div>
     </main>
 
     <footer>
