@@ -47,6 +47,7 @@ btn.onclick = (e) => {
 
 const nameBtn = document.getElementById("auth-submit");
 
+let values;
 nameBtn.onclick = (e) => {
     e.preventDefault();
 
@@ -128,7 +129,7 @@ nameBtn.onclick = (e) => {
 
     // DRAGGING AND SELECTING TIMES
     const cols = document.querySelectorAll("#user-calendar .cell-col");
-    let values = []; // This will store all the highlighted stuff
+    values = []; // This will store all the highlighted stuff
     let isDragging = false;
 
     cols.forEach((col) => {
@@ -168,15 +169,17 @@ nameBtn.onclick = (e) => {
         isDragging = false;
     }
 
-    tabs.forEach((col) => {
-        col.forEach((tab) => {
+    tabs.forEach((col, i) => {
+        col.forEach((tab, j) => {
             tab.addEventListener("mouseenter", (event) => {
                 if(!isDragging) return;
-                tab.classList.toggle("selected")
+                tab.classList.toggle("selected");
+                values[i][j] = !values[i][j];
             })
 
             tab.addEventListener("mousedown", (event) => {
                 tab.classList.toggle("selected")
+                values[i][j] = !values[i][j];
             })
 
         })
