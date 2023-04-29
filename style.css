@@ -35,11 +35,13 @@ main {
     min-height: calc(100vh - 400px);
 
     max-width: 1000px;
+    padding: 8px;
     margin: 2rem auto;
 
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
 }
 
 main > * {
@@ -99,12 +101,49 @@ input[type="submit"]:hover {
     opacity: 0.8;
 }
 
+
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: 1fr 5fr;
+    column-gap: 1px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+
+.day-header {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #0FA899;
+    color: white;
+}
+
+.day {
+    background-color: #f08080;
+    height: 100%;
+    width: 100%;
+    min-width: 40px;
+}
+
+
+
+
+
 footer {
     width: 100%;
     background-color: #159b42;
     height: 300px;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 18px;
+    
 }
+
 
 
 @media only screen and (max-width: 800px) {
