@@ -24,8 +24,7 @@ let values = []; // This will store all the selected times
 const columns = document.querySelectorAll(".day");
 let dayStates = Array(7).fill(false);
 const dayEnum = ["S", "M", "Tu", "W", "Th", "F", "S"];
-
-
+let dayList = [false, false, false, false, false, false, false];
 
 columns.forEach((col, i) => {
     col.addEventListener("mousedown", () => {
@@ -57,7 +56,6 @@ const createEventbtn = document.getElementById("create-event-btn");
 
 createEventbtn.onclick = async (e) => {
     e.preventDefault();
-
 
     // Sanitization of input
     const fromTime = parseInt(document.getElementById("from").value);
@@ -126,10 +124,14 @@ const updateSelectedTimes = (event) => {
 
 }
 
+function formatTimeforCSS(timeString) {
+    return timeString.replace(":", "");
+  }
 
 const nameBtn = document.getElementById("auth-submit");
 
 let username;
+let buildingGroup = false;
 nameBtn.onclick = async (e) => {
     e.preventDefault();
 
@@ -192,11 +194,14 @@ nameBtn.onclick = async (e) => {
     for(let i = 0; i < 8; i++) {
 
         if(!dayStates[i]) continue;
-
-        out += `<div draggable="false" class='cell-col'>`;
+        // id='${dayEnum[i]}'
+        out += `<div draggable="false" class='cell-col' id=${dayEnum[i]}>`;
 
         for(let j = 0; j < numRows; j++) {
-            out += `<div class='cell'></div>`
+            let formattedTime = formatTimeforCSS(times[j]);
+            if (buildingGroup) formattedTime = "group-" + formattedTime;
+            out += `<div class='cell' id=time-${formattedTime}></div>`;
+            console.log(`Creating cell with parent ${dayEnum[i]} and id ${formattedTime}`);
         }
         out += "</div>"
 
@@ -208,8 +213,9 @@ nameBtn.onclick = async (e) => {
     userCalendar.innerHTML = out;
 
     const cols = document.querySelectorAll("#user-calendar .cell-col");
-    cols.forEach((col) => {
-        values.push([Array(col.children.length).fill(false)]);
+    cols.forEach((col, i) => {
+        // values[outDays[i]] = Array(col.children.length).fill(false) 
+        values.push(Array(col.children.length).fill(false));
     })
 
     console.log("Values initialized as, ", values);
@@ -247,8 +253,6 @@ nameBtn.onclick = async (e) => {
 
     });
 
-
-
     onmousedown = () => {
         isDragging = true;
     }
@@ -265,42 +269,105 @@ nameBtn.onclick = async (e) => {
             tab.addEventListener("mouseenter", (event) => {
                 if(!isDragging) return;
                 tab.classList.toggle("selected");
-                console.log(`changing values index i =${i} index y = ${j}`)
+                // console.log(`changing values index i =${i} index y = ${j}`)
                 cloned = values[i];
                 cloned[j] = !cloned[j];
-                console.log("cloned", cloned.length, cloned);
+                // console.log("cloned", cloned.length, cloned);
                 values[i][j] = !values[i][j];
-                console.log("values updated as ,", values);
+                // console.log("values updated as ,", values);
             })
 
             tab.addEventListener("mousedown", (event) => {
                 tab.classList.toggle("selected")
-                console.log(`changing values index i =${i} index y = ${j}`)
+                // console.log(`changing values index i =${i} index y = ${j}`)
                 cloned = values[i];
                 cloned[j] = !cloned[j];
-                console.log("cloned", cloned.length, cloned);
+                // console.log("cloned", cloned.length, cloned);
                 values[i][j] = values[i][j];
-                console.log("values updated as ,", values);
+                // console.log("values updated as ,", values);
                 
             })
 
         })
     })
-
-
     
     const groupCalendar = document.getElementById("group-calendar");
 
     groupCalendar.style.gridTemplateColumns = `1fr repeat(${numCols}, 2fr)`;
-
+    
     groupCalendar.innerHTML = out;
+
+    function prefixIds(element) {
+        if (element.hasChildNodes()) {
+          const children = element.childNodes;
+          for (let i = 0; i < children.length; i++) {
+            const child = children[i];
+            if (child.nodeType === Node.ELEMENT_NODE) { // check if the child node is an element node
+              if (child.hasAttribute('id')) { // check if child has an existing id
+                const existingId = child.getAttribute('id');
+                child.setAttribute('id', `group-${existingId}`); // prefix the id with "group-"
+              }
+              prefixIds(child); // recursively process child's children
+            }
+          }
+        }
+      }
+      
+      prefixIds(groupCalendar);
 
 //              M            Friday
 // values = [[t, t, f], [t, f, f]...]
 
+function getRangesHexCodes(num) {
+    let hexCodes;
+    if (num == 0) {
+        hexCodes = { range1: "#fe6f6f" }; // red
+        return {
+            [hexCodes.range1]: [0, 1]
+        };
+    }
+    if (num === 1) {
+      hexCodes = { range1: "#006400" }; // dark green
+      return {
+        [hexCodes.range1]: [0, num]
+      };
+    } else if (num === 2) {
+      hexCodes = {
+        range1: "#228B22", // medium green
+        range2: "#006400"  // darkgreen
+      };
+      return {
+        [hexCodes.range1]: [0, 3],
+        [hexCodes.range2]: [1, num + 1]
+      };
+    } else {
+      let rangeSize = num / 3;
+      let range1 = Math.floor(rangeSize);
+      let range2 = Math.floor(rangeSize * 2) - range1;
+      let range3 = num - range1 - range2;
+      hexCodes = {
+        range1: "#98FB98",  // pale green
+        range2: "#228B22",  // medium green
+        range3: "#006400"   // dark green
+      };
+      return {
+        [hexCodes.range1]: [0, range1 + 1],
+        [hexCodes.range2]: [range1, range2 + 1],
+        [hexCodes.range3]: [range1 + range2, num + 1]
+      };
+    }
+  }
 
-
-
+    function getHexCodeFromNumber(ranges, num) {
+        if (num == 0) return "#fe6f6f";
+        for (let hexCode in ranges) {
+          let range = ranges[hexCode];
+          if (num >= range[0] && num < range[0] + range[1]) {
+            return hexCode;
+          }
+        }
+        return "#fe6f6f";
+      }
 
     setInterval(async () => {
         if(didSelectedTimesChange) {
@@ -312,7 +379,6 @@ nameBtn.onclick = async (e) => {
                 })
             })
 
-
             console.log(selectedTimes);
             const { data1, error1 } = ( await supabaseClient
                 .from('Times')
@@ -320,28 +386,108 @@ nameBtn.onclick = async (e) => {
                   selectedTimes,
                 ));
             console.log(data1, error1)
-        
-        
-        
+            selectedTimes = [];
+
             let AvailableCounter = {}
             outDays.forEach((day) => {
                 AvailableCounter[day] = {};
                 outTimes.forEach((time) => {
-                    AvailableCounter[day][time] = [] // Use day instead of "day"
+                    AvailableCounter[day][time] = [] 
                 })
             });
+
+            await new Promise(resolve => setTimeout(resolve, 200));            
         
             const { data, error } = await supabaseClient
             .from('Times')
             .select()
+            .eq('Event', eventName)
             .not('UserID', 'is', null)
-            console.log('read combined times', data, error)
-        
+            console.log('read combined times', data, error)        
 
+            let DayFreeTimeCount = {"S": {}, "M": {}, "Tu": {}, "W": {}, "Th": {}, "F": {}, "S": {}};
+
+            let max = 0;
+            data.forEach(function(obj) {
+                if (obj.UserID === null) {
+                  return;  // skip object with null UserID
+                }
+                if (!DayFreeTimeCount[obj.Day][obj.Time]) {
+                  DayFreeTimeCount[obj.Day][obj.Time] = 1;
+                } else {
+                  DayFreeTimeCount[obj.Day][obj.Time]++;
+                }
+                if (DayFreeTimeCount[obj.Day][obj.Time] > max) {
+                    max = DayFreeTimeCount[obj.Day][obj.Time];
+                  }
+              });
+
+            console.log("DayFreeTimeCount", DayFreeTimeCount);
+            
+            let ranges = getRangesHexCodes(max);
+            let hexCode;
+            let formattedTime;
+            let cell;
+            let count;
+
+            console.log("outDays", outDays)
+            for (let day in DayFreeTimeCount) {
+                for (let time in DayFreeTimeCount[day]) {
+                    console.log("changing color ", "day ", day, " time ", time)
+                    count = DayFreeTimeCount[day][time];  // get the count for the current time    
+                    // get the hex code associated with the current count within the ranges object
+                    hexCode = getHexCodeFromNumber(ranges, count);
+                    formattedTime = formatTimeforCSS(time);
+                    cell = document.querySelector(`#group-${day} > #group-time-${formattedTime}`);
+                    if (outDays.includes(day.toString()) && cell != null) {
+                        console.log("RANGES: ", ranges, " COUNT: ", count, "MAX: ", max);
+                        console.log("COLORED", hexCode, `#group-${day} > #group-time-${formattedTime}`);
+                        console.log("action")
+                        cell = document.querySelector(`#group-${day} > #group-time-${formattedTime}`);
+                        cell.style.backgroundColor = hexCode;
+                    }
+                }
+            }
             didSelectedTimesChange = false;
         }
 
-
-    }, 1000) 
+    }, 500) 
 }
 
+
+console.log("DayFreeTimeCount", DayFreeTimeCount);
+            
+let ranges = getRangesHexCodes(max);
+let hexCode;
+let formattedTime;
+let cell;
+let count;
+
+// console.log("outDays", outDays)
+// for (let day in DayFreeTimeCount) {
+//     for (let time in DayFreeTimeCount[day]) {
+//         console.log("changing color ", "day ", day, " time ", time)
+//         count = DayFreeTimeCount[day][time];  // get the count for the current time    
+//         // get the hex code associated with the current count within the ranges object
+//         hexCode = getHexCodeFromNumber(ranges, count);
+//         formattedTime = formatTimeforCSS(time);
+//         cell = document.querySelector(`#group-${day} > #group-time-${formattedTime}`);
+//         console.log("RANGES: ", ranges, " COUNT: ", count, "MAX: ", max);
+//         console.log("COLORED", hexCode, `#group-${day} > #group-time-${formattedTime}`);
+//         if (outDays.includes(day.toString()) && cell != null) {
+//             outTimes.forEach((time2) => {
+//                 console.log("action")
+//                 count = DayFreeTimeCount[day][time2];
+//                 hexCode = getHexCodeFromNumber(ranges, count);
+//                 formattedTime = formatTimeforCSS(time2);
+//                 cell = document.querySelector(`#group-${day} > #group-time-${formattedTime}`);
+//                 cell.style.backgroundColor = hexCode;
+//             });
+//         }
+//     }
+// }
+// didSelectedTimesChange = false;
+// }
+
+// }, 500) 
+// }
