@@ -1,5 +1,7 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.21.0/+esm';
 
+
+
 async function initSupabase() {
   const SUPABASE_URL = 'https://whwkeouhmenvcbjwgbqq.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indod2tlb3VobWVudmNiandnYnFxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4Mjc3OTg5MywiZXhwIjoxOTk4MzU1ODkzfQ.kcp9RCb5ItbzXlfPPZq-ZyufQQJcgVnaLyIq8_vsSUA';
@@ -23,7 +25,7 @@ let values = []; // This will store all the selected times
 
 const columns = document.querySelectorAll(".day");
 let dayStates = Array(7).fill(false);
-const dayEnum = ["S", "M", "Tu", "W", "Th", "F", "S"];
+const dayEnum = ["Su", "M", "Tu", "W", "Th", "F", "Sa"];
 
 
 
@@ -58,20 +60,27 @@ const createEventbtn = document.getElementById("create-event-btn");
 createEventbtn.onclick = async (e) => {
     e.preventDefault();
 
+    const flavour = document.getElementById("flavour-text")
+
 
     // Sanitization of input
     const fromTime = parseInt(document.getElementById("from").value);
     const toTime = parseInt(document.getElementById("to").value);
-    if(fromTime >= toTime) return;
-
-    // 11:00 -> 1100
-
-    // 1:30 -> 1330
-
-    // 2:30 -> 1430
+    if(fromTime >= toTime) {
+        flavour.innerText = "The starting time has to come before the ending time!"
+        return
+    }
 
     const eventName = document.getElementById("eventname").value;
-    if(!eventName || !dayStates.some((el) => {return Boolean(el)})) return;
+    if(!eventName) {
+        flavour.innerText = "That's not a very good event name! (Please insert a valid one)"
+        return
+    }
+    
+    if(!dayStates.some((el) => {return Boolean(el)})) {
+        flavour.innerText = "Please select at LEAST one available day from the calendar on the left!"
+        return
+    }
 
 
     let { data, error } = await supabaseClient
@@ -79,7 +88,7 @@ createEventbtn.onclick = async (e) => {
     .insert([
       { Name: eventName},
     ]);
-    console.log(data, error);
+    // console.log(data, error);
 
     const times = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'];
 
@@ -106,14 +115,14 @@ createEventbtn.onclick = async (e) => {
         })
     });
 
-    console.log(reqs);
+    // console.log(reqs);
 
-    const { data1, error1 } = ( await supabaseClient
-    .from('Times')
-    .insert(
-      reqs,
-    ));
-    console.log(data1, error1);
+    // const { data1, error1 } = ( await supabaseClient
+    // .from('Times')
+    // .insert(
+    //   reqs,
+    // ));
+    // console.log(data1, error1);
 
     document.getElementById("group-event").style.display = "flex";
 
@@ -122,9 +131,7 @@ createEventbtn.onclick = async (e) => {
     document.getElementById("setup").style.display = "none";
 }
 
-const updateSelectedTimes = (event) => {
 
-}
 
 
 const nameBtn = document.getElementById("auth-submit");
@@ -209,26 +216,30 @@ nameBtn.onclick = async (e) => {
 
     const cols = document.querySelectorAll("#user-calendar .cell-col");
     cols.forEach((col) => {
-        values.push([Array(col.children.length).fill(false)]);
+        values.push(Array(col.children.length).fill(false));
     })
 
-    console.log("Values initialized as, ", values);
 
-        // WIP RESET BUTTON
-    // document.getElementById("reset-calendar").onclick = (event) => {
-    //     event.preventDefault();
-    //     values = [];
+    document.getElementById("reset-calendar").onclick = (event) => {
+        event.preventDefault();
+
+        values = [];
     
-    //     cols.forEach((col) => {
-    //         values.push([Array(col.children.length).fill(false)]);
+        cols.forEach((col) => {
+            values.push(Array(col.children.length).fill(false));
 
-    //     })
+        })
 
-    // }
+        tabs.forEach((col) => {
+            
+            col.forEach((tab) => {       
+                tab.classList.remove("selected");
+        
+        })})
+
+    }
 
     document.querySelector(".user-calendar-settings").style.display = "block";
-
-    // userCalendarSettings
 
     // DRAGGING AND SELECTING TIMES
     let selectedTimes = [];
@@ -258,29 +269,17 @@ nameBtn.onclick = async (e) => {
         didSelectedTimesChange = true;
     }
 
-    // {"M": [{900: true, 930: true., ,}]}
-    let cloned;
     tabs.forEach((col, i) => {
         col.forEach((tab, j) => {
             tab.addEventListener("mouseenter", (event) => {
                 if(!isDragging) return;
                 tab.classList.toggle("selected");
-                console.log(`changing values index i =${i} index y = ${j}`)
-                cloned = values[i];
-                cloned[j] = !cloned[j];
-                console.log("cloned", cloned.length, cloned);
                 values[i][j] = !values[i][j];
-                console.log("values updated as ,", values);
             })
 
             tab.addEventListener("mousedown", (event) => {
                 tab.classList.toggle("selected")
-                console.log(`changing values index i =${i} index y = ${j}`)
-                cloned = values[i];
-                cloned[j] = !cloned[j];
-                console.log("cloned", cloned.length, cloned);
-                values[i][j] = values[i][j];
-                console.log("values updated as ,", values);
+                values[i][j] = !values[i][j];
                 
             })
 
@@ -295,51 +294,178 @@ nameBtn.onclick = async (e) => {
 
     groupCalendar.innerHTML = out;
 
-//              M            Friday
-// values = [[t, t, f], [t, f, f]...]
 
 
+    // Right Calendar
+    let groupCols = document.querySelectorAll("#group-calendar .cell-col");
+
+    let groupTabs = [];
+
+    groupCols.forEach((col) => {
+        let toPush = [];
+
+        for(let i = 0; i < col.children.length; i++) {
+            toPush.push(col.children[i]);
+        }
+
+        groupTabs.push(toPush);
+
+    });
+
+    // TEMPORARY: THIS MIRRORS THE ACTIVITY ON THE LEFT CALENDAR ONTO THE RIGHT ONE
+    setInterval(() => {
+        if(!didSelectedTimesChange) return;
+
+        groupTabs.forEach((col, i) => {
+            col.forEach((tab, j) => {
+
+                if(values[i][j]) { 
+                    tab.classList.add("selected-by-user");
+                } else {
+                    tab.classList.remove("selected-by-user");
+
+                }
+            })
+
+        didSelectedTimesChange = false;
+
+    })}, 1000)
+
+
+    const heatmap = [];
+
+    cols.forEach((col) => {
+        heatmap.push(Array(col.children.length).fill(0));
+    })
+
+
+    heatmap.forEach((col, i) => {
+        col.forEach((entry, j) => {
+            
+            let crowdedness = Math.floor(Math.random() * 7);
+
+            heatmap[i][j] = crowdedness;
+
+        })
+
+    })
+
+    console.log(heatmap);
 
 
 
     setInterval(async () => {
-        if(didSelectedTimesChange) {
-            values.forEach((day, i) => {
-                day.forEach((time, j) => {
-                    if(time) {
-                        selectedTimes.push({Day: outDays[i], Time: outTimes[j], Event: eventName, UserID: username});
-                    }
-                })
-            })
 
+        // if(!didSelectedTimesChange) return;
 
-            console.log(selectedTimes);
-            const { data1, error1 } = ( await supabaseClient
-                .from('Times')
-                .insert(
-                  selectedTimes,
-                ));
-            console.log(data1, error1)
         
-        
-        
-            let AvailableCounter = {}
-            outDays.forEach((day) => {
-                AvailableCounter[day] = {};
-                outTimes.forEach((time) => {
-                    AvailableCounter[day][time] = [] // Use day instead of "day"
-                })
-            });
-        
-            const { data, error } = await supabaseClient
-            .from('Times')
-            .select()
-            .not('UserID', 'is', null)
-            console.log('read combined times', data, error)
-        
+        for(let i = 0; i < heatmap.length; i++) {
+            for(let j = 0; j < heatmap[i].length; j++) {
+                if(values[i][j]) {
+                    heatmap[i][j] += 1;
+                }
 
-            didSelectedTimesChange = false;
+            }
         }
+
+        // console.log(heatmap);
+
+        didSelectedTimesChange = false;
+
+
+        let allUnselected = true;
+       for(let i = 0; i < values.length; i++) {
+        for(let j = 0; j < values[i].length; j++) {
+            if(values[i][j]) {
+                allUnselected = false;
+            }
+        }
+
+       }
+
+
+
+        groupTabs.forEach((col, i) => {
+            col.forEach((tab, j) => {
+
+                if(!allUnselected) {
+                    tab.classList.add("darken")
+                } else {
+                    tab.classList.remove("darken")
+                }
+              if (heatmap[i][j] >= 5) {
+                tab.classList.add(`selected-4`);
+                
+              } else {
+                tab.classList.add(`selected-${heatmap[i][j]}`);
+              }
+            });
+          });
+        
+        // values.forEach((day, i) => {
+        //     day.forEach((time, j) => {
+        //         if(time) {
+        //             selectedTimes.push({Day: outDays[i], Time: outTimes[j], Event: eventName, UserID: username});
+        //         }
+        //     })
+        // })
+
+        // async function getData () {
+        //     let { data3, error3 } = await supabaseClient
+        //     .from('Times')
+        //     .select()
+        //     .eq("Event", eventName);
+    
+        //     console.log(data3);
+
+        //     if(data3) {
+        //         data3.forEach((entry) => {
+        //             if(!entry["UserID"]) return;
+
+        //             if(entry["Event"] === "This is my event") console.log("HEY!");
+        
+        //             console.log("ENTRY", entry);
+                        
+        //         })
+        //     }
+
+
+        // }
+
+        // getData();
+
+
+
+
+
+
+        // // console.log(selectedTimes);
+        // // const { data1, error1 } = ( await supabaseClient
+        // //     .from('Times')
+        // //     .insert(
+        // //       selectedTimes,
+        // //     ));
+    
+    
+    
+        // let AvailableCounter = {}
+        // outDays.forEach((day) => {
+        //     AvailableCounter[day] = {};
+        //     outTimes.forEach((time) => {
+        //         AvailableCounter[day][time] = [] // Use day instead of "day"
+        //     })
+        // });
+    
+        // const { data, error } = await supabaseClient
+        // .from('Times')
+        // .select()
+        // .not('UserID', 'is', null)
+
+        // console.log(data);
+    
+
+        // didSelectedTimesChange = false;
+        
 
 
     }, 1000) 

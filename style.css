@@ -106,6 +106,7 @@ input[type="submit"], button {
 }
 
 button {
+    position: absolute;
     margin-top: 20px;
 }
 
@@ -174,6 +175,54 @@ input[type="submit"]:hover, button:hover {
     background-color: #159b42;
 }
 
+.selected-4 {
+    background-color: #159b42;
+}
+
+.selected-3 {
+    background-color: #75ce00;
+}
+
+
+.selected-2 {
+    background-color: #e8b706;
+}
+
+
+.selected-1 {
+    background-color: #f67f24;
+}
+
+.selected-0 {
+    background-color: #e44736;
+}
+
+.selected-by-user {
+    scale: 1.05;
+    border: 3px solid black;
+    z-index: 621;
+}
+
+.darken {
+    position: relative;
+}
+
+.darken::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    background-color: rgba(0 0 0 / 0.55);
+}
+
+.darken.selected-by-user::after {
+    all: unset;
+}
+
+
 .cell-time {
     background-color: #0FA899;
     color: white;
@@ -181,8 +230,15 @@ input[type="submit"]:hover, button:hover {
 
 #group-event {
     display: none;
+    position: relative;
+    padding-bottom: 50px;
 }
 
+.guide {
+    position: absolute;
+    bottom: -20px;
+    font-size: 18px;
+}
 
 footer {
     width: 100%;
